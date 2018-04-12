@@ -1,0 +1,101 @@
+entity MantisImport {
+	name String required
+    importDate LocalDate required
+    file Blob required
+}
+
+entity MantisApprover {
+    fullName String required
+}
+
+entity State {
+    name String required
+}
+entity Status {
+    name String required
+}
+
+entity Mantis {
+	mantisNumber String required
+    submissionDate LocalDate required 
+}
+
+entity MantisImportLine {
+	mantisNumber String required
+    validationStatus 		String
+    project					String
+    updateDate				LocalDate
+    category				String
+    gravity					String
+    augeoReference				String
+    technicalReference			String
+    description				String
+    submissionDate				LocalDate
+    desiredCommitmentDate			LocalDate
+    estimatedChargeCACF			Double
+    commitmentDateCDS			LocalDate
+    estimatedChargeCDS			Double
+    estimatedDSTDelivreryDate		LocalDate
+    recipeDate				LocalDate
+    productionDate				LocalDate
+    devStandardsComplianceScore		String
+    devStandardsComplianceScoreComment	String
+    expressedNeedsComplianceScore		String
+    expressedNeedsComplianceScoreComment	String
+    overallDeadlineRespectScore		String
+    overallDeadlineRespectScoreComment	String
+}
+
+entity Project {
+	name String required
+}
+
+entity Referent {
+	name String required
+}
+
+entity MantisStatus{
+    changeDate LocalDate required
+}
+
+entity MantisConsumption{
+	submissionDate LocaleDate required
+    consumed Double required
+    toBill Double required    
+}
+
+relationship ManyToOne {
+	Mantis{project} to Project
+}
+relationship ManyToOne {
+	MantisImportLine{state} to State
+	MantisImportLine{mantisImport} to MantisImport
+    MantisImportLine{mantis} to Mantis
+}
+relationship ManyToOne {
+	Project{referent} to Referent
+}
+
+relationship ManyToOne {
+	MantisStatus{mantis} to Mantis
+	MantisStatus{status} to Status
+    MantisStatus{user} to User
+    MantisStatus{approver} to MantisApprover
+}
+relationship ManyToOne {
+	MantisImport{user} to User
+}
+
+relationship ManyToOne {
+	MantisConsumption{user} to User
+    MantisConsumption{mantis} to Mantis
+}
+
+// Set pagination options
+paginate * with pagination
+
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+filter *
